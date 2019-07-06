@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQLMap 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+    
+    <sqlMap namespace="Emp">
+        <typeAlias alias="Emp" type="kr.co.seoulit.base.to.EmpBean"/>	
+ <resultMap class="Emp" id="getEmpDataSetResultMap">
+		<result property="empNo" column="EMP_NO"/>
+		<result property="empName" column="EMP_NAME"/>
+		<result property="empPw" column="EMP_PW"/>
+		<result property="deptCode" column="DEPT_CODE"/>
+		<result property="empZipcode" column="EMP_ZIPCODE"/>
+		<result property="empAddress" column="EMP_ADDRESS"/>
+		<result property="authorityCode" column="AUTHORITY_CODE"/>
+		<result property="imageFile" column="IMAGE_FILE"/>
+		<result property="useYn" column="USE_YN"/>
+	</resultMap>
+
+
+	<select id="getEmpDataSet"  resultMap="getEmpDataSetResultMap">
+		select * from Emp e inner join 
+		(SELECT * FROM CODE WHERE CATEGORY_CODE='BS-01') c 
+		on e.EMP_NO=c.code
+	</select>
+	<select id="findEmp"  resultClass="Emp">
+		select 
+			emp_no as empNo,
+			EMP_NAME as empName,
+			EMP_PW as empPw, 
+			AUTHORITY_CODE as authorityCode,
+			c.value as authorityName
+		from emp e   
+		inner join (SELECT CODE,value FROM CODE WHERE CATEGORY_CODE='BS-04') c 
+		on e.AUTHORITY_CODE = c.CODE 
+		where emp_no=#empNo#
+	</select>
+	<insert id="insertEmp">
+	  insert into EMP values (#empNo#,
+	  						  #empName#,
+	  						  #empPw#,
+	  						  #empZipcode#,
+	  						  #empAddress#,
+	  						  #deptCode#,
+	  						  #authorityCode#,
+	  						  #imageFile#)
+	</insert>
+	
+	<delete id="deleteEmp">
+		delete from EMP where EMP_NO=#empNo#
+	</delete>
+	
+	<update id="updateEmp">
+		update EMP set	EMP_NAME=#empName#,
+	  			     	EMP_PW=#empPw#,
+	  					EMP_ZIPCODE=#empZipcode#,
+	  					EMP_ADDRESS=#empAddress#,
+	  					DEPT_CODE=#deptCode#,
+	  				    AUTHORITY_CODE=#authorityCode#,
+	  					IMAGE_FILE=#imageFile#
+		where EMP_NO=#empNo#
+	</update>
+</sqlMap>

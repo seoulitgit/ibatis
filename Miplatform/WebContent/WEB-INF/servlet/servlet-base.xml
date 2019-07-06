@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+	<bean id="handlerMapping1"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="order" value="1" />
+		<property name="alwaysUseFullPath" value="false" />
+		<property name="mappings">
+			<props>
+				<prop key="/code.do">codeController</prop>	
+				<prop key="/emp.do">empController</prop>	
+				<prop key="/baseEnv.do">baseEnvController</prop>		
+				<prop key="/login.do">loginController</prop>
+				<prop key="/post.do">postController</prop>						
+			</props>
+		</property>
+	</bean>
+	
+	
+	<bean name="codeController" class="kr.co.seoulit.base.controller.CodeController"
+		p:baseServiceFacade-ref="baseServiceFacade"
+		parent="abstractMiplatformController"
+		 />
+	<bean name="loginController" class="kr.co.seoulit.base.controller.LoginController"
+		p:baseServiceFacade-ref="baseServiceFacade"
+		parent="abstractMiplatformController"
+		 />
+	<bean name="baseEnvController" class="kr.co.seoulit.base.controller.BaseEnvController"
+		p:baseServiceFacade-ref="baseServiceFacade"
+		parent="abstractMiplatformController"
+		 />
+	<bean name="empController" class="kr.co.seoulit.base.controller.EmpController"
+		p:baseServiceFacade-ref="baseServiceFacade"
+		p:message-ref="message"
+		parent="abstractMiplatformController"
+		 />
+	<bean name="postController" class="kr.co.seoulit.base.controller.PostController"
+		p:baseServiceFacade-ref="baseServiceFacade"
+		parent="abstractMiplatformController"
+		 />
+
+
+
+</beans>

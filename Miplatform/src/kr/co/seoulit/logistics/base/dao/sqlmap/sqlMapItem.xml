@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQLMap 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Item">
+	
+	<typeAlias alias="Item" type="kr.co.seoulit.logistics.base.to.ItemBean" />
+
+	
+	<resultMap class="Item" id="getItemListResultMap">
+		<result property="itemCode" column="ITEM_CODE" />
+		<result property="itemName" column="ITEM_NAME" />
+		<result property="itemGroupCode" column="ITEM_GROUP_CODE" />
+	    <result property="itemGradeCode" column="ITEM_GRADE_CODE" />
+	    <result property="procurementCode" column="PROCUREMENT_CODE" />
+	    <result property="unit" column="UNIT" />
+		<result property="leadTime" column="LEAD_TIME" />
+		<result property="lossFactor" column="LOSS_FACTOR" />
+	    <result property="standardCost" column="STANDARD_COST" />
+	    <result property="customerCode" column="CUSTOMER_CODE" />
+	    <result property="customerName" column="CUSTOMER_NAME" />
+	    <result property="image" column="IMAGE" />
+	    <result property="useYn" column="USE_YN" />
+	</resultMap>
+	<resultMap class="Item" id="searchItemListResultMap">
+		<result property="itemCode" column="ITEM_CODE" />
+		<result property="itemName" column="ITEM_NAME" />
+		<result property="itemGroupCode" column="ITEM_GROUP_CODE" />
+	    <result property="itemGradeCode" column="ITEM_GRADE_CODE" />
+	    <result property="procurementCode" column="PROCUREMENT_CODE" />
+	    <result property="unit" column="UNIT" />
+		<result property="leadTime" column="LEAD_TIME" />
+		<result property="lossFactor" column="LOSS_FACTOR" />
+	    <result property="standardCost" column="STANDARD_COST" />
+	    <result property="customerCode" column="CUSTOMER_CODE" />
+	    <result property="image" column="IMAGE" />
+	</resultMap>
+	
+	<select id="getItemList"	resultMap="getItemListResultMap">
+		select * from item i left outer join customer c on i.CUSTOMER_CODE=c.CUSTOMER_CODE 
+inner join (select * from code where category_code='LO-01') co on co.code=i.ITEM_CODE 
+	</select>
+	<select id="searchItemList"	resultMap="searchItemListResultMap">
+		select * from item 
+		<dynamic prepend="WHERE">
+		      <isNotEmpty prepend="HADOOP" property="query1">
+		          ITEM_NAME LIKE '%'|| #query1# ||'%'
+		      </isNotEmpty>
+		      <isNotEmpty prepend="AND" property="query2">
+		          ITEM_GROUP_CODE=#query2#
+		      </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="query3">
+		          PROCUREMENT_CODE=#query3#
+		      </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="query4">
+		          ITEM_GRADE_CODE=#query4#
+		      </isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<insert id="insertItem">
+	  insert into ITEM 	         (ITEM_CODE,
+								  ITEM_NAME,
+								  ITEM_GROUP_CODE,
+								  ITEM_GRADE_CODE,
+								  PROCUREMENT_CODE,
+								  UNIT,								
+								  LEAD_TIME,
+								  LOSS_FACTOR,
+								  STANDARD_COST,
+								  CUSTOMER_CODE,
+								  IMAGE)
+	  						values (#itemCode#,
+	  						        #itemName#,
+	  						        #itemGroupCode#,
+	  						        #itemGradeCode#,
+	  						        #procurementCode#,
+	  						        #unit#,
+	  						        #leadTime#,
+	  						        #lossFactor#,
+	  						        #standardCost#,
+	  						        #customerCode#,
+	  						        #image# )
+	</insert>
+	
+	<delete id="deleteItem">
+		delete from ITEM where ITEM_CODE=#itemCode#
+	</delete>
+	
+	<update id="updateItem">
+	   	update ITEM set	  ITEM_NAME=#itemName#,
+						  ITEM_GROUP_CODE=#itemGroupCode#,
+						  ITEM_GRADE_CODE=#itemGradeCode#,
+						  PROCUREMENT_CODE=#procurementCode#,
+						  UNIT=#unit#,								
+						  LEAD_TIME=#leadTime#,
+						  LOSS_FACTOR=#lossFactor#,
+						  STANDARD_COST=#standardCost#,
+						  CUSTOMER_CODE=#customerCode#,
+						  IMAGE=#image#
+		 where ITEM_CODE=#itemCode#
+	</update> 
+</sqlMap>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context   
+	   http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+	<aop:config>
+		<aop:pointcut id="DAOPointcut" expression="execution(* kr..dao.*.*(..))" />
+		<aop:pointcut id="loggingPointcut" expression="execution(* kr..service.*.*(..)) or execution(* kr..dao.*.*(..))
+		     or execution(* org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver.*(..))
+		     or execution(* kr..applicationservice.*.*(..))" />
+		<aop:pointcut id="transactionPointcut" expression="execution(* kr..service.*.*(..))" />
+		<aop:advisor advice-ref="transactionAdvice" pointcut-ref="transactionPointcut" />
+		<aop:aspect id="commonAspect" ref="commonAdvice">
+		    <aop:around method="logging" pointcut-ref="loggingPointcut"/>
+		    <aop:after-throwing method="afterThrowing" pointcut-ref="DAOPointcut" throwing="dae"/>
+		</aop:aspect>
+	</aop:config>
+	
+	<bean id="commonAdvice" class="kr.co.seoulit.common.advice.CommonAdvice"
+	      p:messageSource-ref="message" />
+	 <tx:advice id="transactionAdvice" transaction-manager="dataSourceTransactionManager">  
+  <tx:attributes>
+      <tx:method name="process*" propagation="REQUIRED"/>
+      <tx:method name="regiest*" propagation="REQUIRED"/>
+      <tx:method name="*" propagation="NEVER" read-only="true"/>
+   </tx:attributes>
+ </tx:advice>
+</beans>

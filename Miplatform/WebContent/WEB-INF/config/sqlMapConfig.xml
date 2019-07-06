@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig
+ PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"
+ "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+ <settings useStatementNamespaces="true" cacheModelsEnabled="true"
+  enhancementEnabled="false" lazyLoadingEnabled="true"/>
+ 
+ 	<!-- base -->
+ 	<sqlMap resource="kr/co/seoulit/base/dao/sqlmap/sqlMapCode.xml"/>
+ 	<sqlMap resource="kr/co/seoulit/base/dao/sqlmap/sqlMapEmp.xml"/>
+ 	<sqlMap resource="kr/co/seoulit/base/dao/sqlmap/sqlMapMenuAuth.xml"/>
+	<sqlMap resource="kr/co/seoulit/base/dao/sqlmap/sqlMapPost.xml"/>
+	<sqlMap resource="kr/co/seoulit/base/dao/sqlmap/sqlMapCustomer.xml"/>
+	<!-- logisticsbase -->
+	<sqlMap resource="kr/co/seoulit/logistics/base/dao/sqlmap/sqlMapWarehouse.xml"/>
+	<sqlMap resource="kr/co/seoulit/logistics/base/dao/sqlmap/sqlMapItem.xml"/>
+	<sqlMap resource="kr/co/seoulit/logistics/base/dao/sqlmap/sqlMapBOM.xml"/>
+	<!-- purchase -->
+	<sqlMap resource="kr/co/seoulit/logistics/purchase/dao/sqlmap/sqlMapInventory.xml"/>
+	<sqlMap resource="kr/co/seoulit/logistics/purchase/dao/sqlmap/sqlMapSubulRecord.xml"/>
+	<sqlMap resource="kr/co/seoulit/logistics/purchase/dao/sqlmap/sqlMapProductionPlan.xml"/>
+	<!-- business -->
+	<sqlMap resource="kr/co/seoulit/logistics/business/dao/sqlmap/sqlMapOrder.xml"/>
+</sqlMapConfig>

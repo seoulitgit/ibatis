@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQLMap 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+ 
+    <sqlMap namespace="ProductionPlan">
+        <typeAlias alias="ProductionPlan" type="kr.co.seoulit.logistics.purchase.to.ProductionPlanBean"/>	
+ 		<typeAlias alias="Mrp" type="kr.co.seoulit.logistics.purchase.to.MRPBean"/>
+	    <resultMap class="ProductionPlan" id="searchMpsResultMap">
+			<result property="itemCode" column="ITEM_CODE"/>
+			<result property="planDate" column="PLAN_DATE"/>
+			<result property="planQuantity" column="PLAN_QUANTITY"/>
+		    <result property="orderNo" column="ORDER_NO"/>
+			<result property="productionPlanNo" column="PRODUCTION_PLAN_NO"/>
+			<result property="planCode" column="PLAN_CODE"/>
+			
+		</resultMap>
+		
+	     <resultMap class="Mrp" id="unfoldMrpResultMap">
+			<result property="itemCode" column="ITEM_CODE"/>
+			<result property="itemGradeCode" column="ITEM_GRADE_CODE"/>
+			<result property="strDate" column="STR_DATE"/>
+		    <result property="endDate" column="END_DATE"/>
+			<result property="demandQuantity" column="DEMAND_QUANTITY"/>
+			<result property="unit" column="UNIT"/>
+			<result property="leadTime" column="LEAD_TIME"/>
+			<result property="lossFactor" column="LOSS_FACTOR"/>
+		</resultMap>
+  	<resultMap class="Mrp" id="unfoldSumMrpResultMap">
+			<result property="itemCode" column="ITEM_CODE"/>
+			<result property="itemGradeCode" column="ITEM_GRADE_CODE"/>
+			<result property="demandQuantity" column="DEMAND_QUANTITY"/>
+			<result property="unit" column="UNIT"/>
+			<result property="leadTime" column="LEAD_TIME"/>
+			<result property="lossFactor" column="LOSS_FACTOR"/>
+			
+		</resultMap>
+	     
+	    <select id="unfoldMrp" resultMap="unfoldMrpResultMap" >
+	        select * from TABLE(MRP_FUNC( #query1# , #query2# ))
+	    </select>
+	     <select id="unfoldSumMrp" resultMap="unfoldSumMrpResultMap" >
+	        select sum(DEMAND_QUANTITY) as DEMAND_QUANTITY ,ITEM_CODE,LEAD_TIME,ITEM_GRADE_CODE,UNIT,LOSS_FACTOR from TABLE(MRP_FUNC( #query1# , #query2# )) group by ITEM_CODE,LEAD_TIME,ITEM_GRADE_CODE,UNIT,LOSS_FACTOR
+	        ORDER by ITEM_GRADE_CODE desc
+	    </select>
+	<select id="searchMps"  resultMap="searchMpsResultMap">
+select ITEM_CODE,
+	    ORDER_NO,
+	    PLAN_CODE,
+	    PLAN_QUANTITY,
+	    PRODUCTION_PLAN_NO,
+	    TO_CHAR(PLAN_DATE,'YYYYMMDD') PLAN_DATE
+from PRODUCTION_PLAN
+		 <dynamic prepend="WHERE">
+		   <isNotEmpty prepend="HADOOP" property="query3">
+		          PLAN_CODE=#query3#
+		      </isNotEmpty>
+		      <isNotEmpty prepend="AND" property="query1">
+		          <isEmpty property="query2" >
+		             PLAN_DATE BETWEEN #query1# AND sysdate
+		          </isEmpty>
+		          <isNotEmpty property="query2" >
+		         	PLAN_DATE BETWEEN #query1# AND #query2#
+		      	  </isNotEmpty>
+		      </isNotEmpty>
+		      		      
+	</dynamic>
+	</select>
+	
+	
+	<insert id="insertproductionPlan">
+	    insert into PRODUCTION_PLAN values(#itemCode#
+	                                       ,#planDate#
+	                                       ,#planQuantity#
+	                                       ,#orderNo#
+	                                       ,#productionPlanNo#
+	                                       ,#planCode#)
+	</insert>	
+	
+	<update id="updateproductionPlan">
+	  	update PRODUCTION_PLAN set	 
+	  						PLAN_DATE=#planDate#,
+	  						PLAN_QUANTITY=#planQuantity#,
+	  						ORDER_NO=#orderNo#,
+	  						PLAN_CODE=#planCode#
+		 where PRODUCTION_PLAN_NO=#productionPlanNo#
+	</update>
+	<delete id="deleteproductionPlan">
+	     delete from PRODUCTION_PLAN where PRODUCTION_PLAN_NO=#productionPlanNo#
+	</delete>
+</sqlMap>

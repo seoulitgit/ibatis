@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQLMap 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="BOM">
+	
+	<typeAlias alias="BOM" type="kr.co.seoulit.logistics.base.to.BOMBean" />
+
+	<resultMap class="BOM" id="searchBOMResultMap">
+		<result property="demandQuantity" column="DEMAND_QUANTITY" />
+		<result property="netQuantity" column="NET_QUANTITY" />
+		<result property="parentItemCode" column="PARENT_ITEM_CODE" />
+	    <result property="itemCode" column="ITEM_CODE" />
+	    <result property="lossFactor" column="LOSS_FACTOR" />
+	    <result property="parentItemName" column="PARENT_ITEM_NAME" />
+	    <result property="itemName" column="ITEM_NAME" />
+	</resultMap>
+	<resultMap class="BOM" id="unfoldBOMResultMap">
+		<result property="demandQuantity" column="DEMAND_QUANTITY" />
+		<result property="netQuantity" column="NET_QUANTITY" />
+		<result property="itemCode" column="ITEM_CODE" />
+	    <result property="lossFactor" column="LOSS_FACTOR" />
+	    <result property="itemName" column="ITEM_NAME" />
+	    <result property="level" column="LEVEL" />
+	    <result property="itemGradeCode" column="ITEM_GRADE_CODE" />
+	   <result property="procurementCode" column="PROCUREMENT_CODE" />
+	    <result property="unit" column="unit" />
+	    <result property="leadTime" column="LEAD_TIME" />
+	    <result property="itemName" column="ITEM_NAME" />
+	    <result property="level" column="LEVEL" />
+	</resultMap>
+	 
+	<select id="searchBOM"	resultMap="searchBOMResultMap">
+select b.PARENT_ITEM_CODE,
+	   b.ITEM_CODE,
+	   b.NET_QUANTITY,
+	   b.DEMAND_QUANTITY,
+	   i.ITEM_NAME,
+	   pi.ITEM_NAME as parent_item_name,
+	   i.LOSS_FACTOR 
+	from BOM b inner join item i on b.ITEM_CODE=i.ITEM_CODE 
+               inner join item pi on b.PARENT_ITEM_CODE=pi.ITEM_CODE
+WHERE parent_item_code=#itemCode# 
+	</select>
+	<select id="unfoldBOM"	resultMap="unfoldBOMResultMap">
+	select level,
+		i.item_code,
+		i.ITEM_NAME,
+		i.ITEM_GRADE_CODE,
+		i.PROCUREMENT_CODE,
+		b.NET_QUANTITY,
+		b.DEMAND_QUANTITY,
+		i.UNIT,i.LEAD_TIME,
+		i.LOSS_FACTOR,
+		i.CUSTOMER_CODE,
+		b.PARENT_ITEM_CODE 
+	from item i left outer join BOM b on i.ITEM_CODE=b.ITEM_CODE 
+	 Start with i.ITEM_CODE=#parentItemCode#
+	 connect by PRIOR i.ITEM_CODE=b.PARENT_ITEM_CODE
+	</select>
+	
+
+	<insert id="insertBOM">
+	  insert into BOM values (#demandQuantity#,
+	  						   #netQuantity#,
+	  						   #parentItemCode#,
+	  						   #itemCode#)
+	</insert>
+	
+	<delete id="deleteBOM">
+		delete from BOM where ITEM_CODE=#itemCode# AND PARENT_ITEM_CODE=#parentItemCode#
+	</delete>
+
+	<update id="updateBOM">
+		update BOM set
+						NET_QUANTITY=#netQuantity#,
+		                DEMAND_QUANTITY=#demandQuantity#
+		where ITEM_CODE=#itemCode# AND PARENT_ITEM_CODE=#parentItemCode#
+	</update>
+</sqlMap>

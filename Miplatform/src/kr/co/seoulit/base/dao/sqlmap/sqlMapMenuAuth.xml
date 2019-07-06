@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQLMap 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+    
+    <sqlMap namespace="MenuAuth">
+        <typeAlias alias="Menu" type="kr.co.seoulit.base.to.MenuBean"/>	
+        <typeAlias alias="MenuAuth" type="kr.co.seoulit.base.to.MenuAuthorityBean"/>	
+ 
+	<select id="getMenuDataSet"  resultClass="Menu">
+		SELECT Level , menu, url,menu_code as menuCode
+		FROM MENU START WITH PARENTMENU_CODE is null CONNECT BY PRIOR Menu_code = PARENTMENU_CODE
+	</select>
+	
+	<select id="getMenuAuthority"  resultClass="MenuAuth">
+		SELECT MA.MENU_CODE as menuCode, 
+      		   MA.AUTHORITY_CODE as authorityCode,
+               M.MENU 
+		FROM MENU_AUTHORITY MA, MENU M
+		WHERE MA.MENU_CODE=M.MENU_CODE
+	</select>
+		
+	<delete id="deleteEmp">
+		delete from EMP where EMP_NO=#empNo#
+	</delete>
+	<insert id="insertMenuAuth">
+	     insert into MENU_AUTHORITY values (#menuCode#,
+	     									#authorityCode#)
+	</insert>
+	<delete id="deleteMenuAuth">
+	    delete from MENU_AUTHORITY 
+	    where MENU_CODE=#menuCode# 
+	    AND AUTHORITY_CODE=#authorityCode#
+	</delete>
+	
+</sqlMap>

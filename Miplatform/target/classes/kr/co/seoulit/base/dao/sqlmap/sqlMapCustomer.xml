@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQLMap 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+    
+    <sqlMap namespace="Customer">
+        <typeAlias alias="Customer" type="kr.co.seoulit.base.to.CustomerBean"/>	
+ <resultMap class="Customer" id="getCustomerResultMap">
+		<result property="customerCode" column="CUSTOMER_CODE"/>
+		<result property="customerName" column="CUSTOMER_NAME"/>
+		<result property="ceoName" column="CEO_NAME"/>
+		<result property="customerTel" column="CUSTOMER_TEL"/>
+		<result property="useYn" column="USE_YN"/>
+ </resultMap>
+
+
+	<select id="getCustomerList"  resultMap="getCustomerResultMap">
+		select * from customer customer inner join 
+		(SELECT * FROM CODE WHERE CATEGORY_CODE='BS-03') code
+		on customer.CUSTOMER_CODE=code.code
+	</select>
+	<insert id="insertCustomer">
+	  insert into customer values (#customerCode#,
+	  						       #customerName#,
+	  						       #ceoName#,
+	  						       #customerTel#
+	  						      )
+	</insert>
+	
+	<delete id="deleteCustomer">
+		delete from customer where CUSTOMER_CODE=#customerCode#
+	</delete>
+	
+	<update id="updateCustomer">
+		update customer set	
+	  			     	CUSTOMER_NAME=#customerName#,
+	  					CEO_NAME=#ceoName#,
+	  					CUSTOMER_TEL=#customerTel#
+	  	where CUSTOMER_CODE=#customerCode#
+	</update>
+</sqlMap>

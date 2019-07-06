@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration>
+<configuration xmlns='http://logging.apache.org/'>
+   
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.out" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="%d{MMM dd hh:mm:ss aa} %p -| %m%n"/>
+        </layout>
+    </appender>
+	<appender name="FILEAPPENDER" class="org.apache.log4j.RollingFileAppender">
+		<param name="append" value="true"/>	
+		<param name="file" value="C:/Temp/logs.log"/>
+		<param name="maxFileSize" value="10MB"/>
+		<param name="maxBackupIndex" value="10"/>
+		<layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="%d{MMM dd hh:mm:ss aa} %p - %C{1}.%M(%L) | %m%n"/>
+		</layout>
+	</appender>   
+	<appender name="INFOFILEAPPENDER" class="org.apache.log4j.RollingFileAppender">
+		<param name="append" value="true"/>	
+		<param name="file" value="C:/Temp/infologs.log"/>
+		<param name="maxFileSize" value="10MB"/>
+		<param name="maxBackupIndex" value="10"/>
+		<layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="%d{MMM dd hh:mm:ss aa} %p - %C{1}.%M(%L) | %m%n"/>
+		</layout>
+	</appender>   
+	<appender name="FATALFILEAPPENDER" class="org.apache.log4j.RollingFileAppender">
+		<param name="append" value="true"/>	
+		<param name="file" value="C:/Temp/fatallogs.log"/>
+		<param name="maxFileSize" value="10MB"/>
+		<param name="maxBackupIndex" value="10"/>
+		<layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="%d{MMM dd hh:mm:ss aa} %p - %C{1}.%M(%L) | %m%n"/>
+		</layout>
+	</appender>   
+<!--     <appender name="SMTPAPPENDER" class="kr.co.seoulit.common.appender.SecureSMTPAppender"> -->
+<!--       <param name="threashold" value="fatal" /> -->
+<!--       <param name="BufferSize" value="512" /> -->
+<!--       <param name="SMTPHost" value="smtp.naver.com" /> -->
+<!--       <param name="SMTPPort" value="587" /> -->
+<!--       <param name="useStartTLS" value="true" /> -->
+<!--       <param name="SMTPUsername" value="kkang930" /> -->
+<!--       <param name="SMTPPassword" value="k1925515!" /> -->
+<!--       <param name="From" value="kkang930@naver.com" /> -->
+<!--       <param name="To" value="kkang930@naver.com" />  -->
+<!--       <param name="Subject" value="TEST - log4j - SMTPAppender" /> -->
+<!--       <layout class="org.apache.log4j.PatternLayout"> -->
+<!--         <param name="ConversionPattern" value="[%d{ISO8601}]%n%n%-5p%n%n%c%n%n%m%n%n" /> -->
+<!--       </layout> -->
+<!--        </appender> -->
+
+
+<!--  <logger name="kr.co.seoulit"> -->
+<!--         <level value="DEBUG"/> -->
+<!--         <appender-ref ref="CONSOLE"/> -->
+<!--     </logger> -->
+    
+<!--     <logger name="kr.co.seoulit"> -->
+<!--         <level value="FATAL"/> -->
+<!--         <appender-ref ref="SMTPAPPENDER"/> -->
+<!--     </logger> -->
+   <root>
+        <level value="DEBUG"/>
+		<appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>

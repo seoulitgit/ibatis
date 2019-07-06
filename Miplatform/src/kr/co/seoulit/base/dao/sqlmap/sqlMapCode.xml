@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQLMap 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+    
+    <sqlMap namespace="Code">
+        <typeAlias alias="CodeCategory" type="kr.co.seoulit.base.to.CategoryCodeBean"/>
+         <typeAlias alias="Code" type="kr.co.seoulit.base.to.CodeBean"/>		
+ <resultMap class="CodeCategory" id="findCodeCategoryResultMap">
+		<result property="categoryCode" column="category_code"/>
+		<result property="categoryValue" column="category_value"/>
+		<result property="modiYN" column="modi_YN"/>
+	</resultMap>
+	<resultMap class="Code" id="getCodeResultMap">
+		<result property="code" column="code"/>
+		<result property="value" column="value"/>
+		<result property="useYN" column="use_yn"/>
+		<result property="categoryCode" column="CATEGORY_CODE"/>
+	</resultMap>
+<cacheModel type="LRU" id="codeCategorycache">
+	    <flushInterval hours="24"/>
+	   </cacheModel>
+	<select id="findCodeCategoryList"  resultMap="findCodeCategoryResultMap">
+		select * from CATEGORY_CODE
+	</select>
+	<select id="getCodeDataSet" resultMap="getCodeResultMap">
+		select * from code
+	</select>
+	<select id="findCodes" parameterClass="hashmap" resultMap="getCodeResultMap">
+		select * from code
+		<iterate prepend="where" property="queryList" open=" CATEGORY_CODE in (" conjunction="," close=")">
+		    #queryList[]#
+ 		</iterate>
+	</select>
+	<insert id="insertCode">
+	  insert into Code values (#code#,
+	  						   #value#,
+	  						   #useYN#,
+	  						   #categoryCode#)
+	</insert>
+	
+	<delete id="deleteCode">
+		delete from Code where CODE=#code# AND CATEGORY_CODE= #categoryCode#
+	</delete>
+	
+	<update id="updateCode">
+		update CODE set	VALUE=#value#,
+		                USE_YN=#useYN#
+		where CODE=#code# AND CATEGORY_CODE= #categoryCode#
+	</update>
+</sqlMap>

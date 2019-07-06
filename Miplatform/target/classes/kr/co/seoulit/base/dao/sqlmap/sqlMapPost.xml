@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQLMap 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+    
+<sqlMap namespace="Post">
+	<typeAlias alias="PostBean" type="kr.co.seoulit.base.to.PostBean"/>	
+	
+	<cacheModel type="LRU" id="Postcache">
+	    <flushInterval hours="24"/>
+	</cacheModel>
+	
+		<select id="searchPostList" cacheModel="Postcache" resultClass="PostBean">
+		SELECT  sido, gugun as sigungu, dong, ri, zip_no as zipno 
+		FROM S_ZIPCODE WHERE dong LIKE '%$dong$%'
+	</select>
+		
+	<select id="searchSidoList" resultClass="PostBean" cacheModel="Postcache">
+		SELECT DISTINCT code as sidoCode,value as sidoname FROM post_si order by value
+	</select>
+	
+	<select id="searchSigunguList" resultClass="PostBean" cacheModel="Postcache">
+	SELECT DISTINCT code as sigunguCode,value as sigunguName FROM post_sigungu where code=#sido#
+	</select>
+	
+	<select id="searchRoadList" resultClass="PostBean" cacheModel="Postcache" parameterClass="hashmap">
+	SELECT zipcode as zipno, road_name as roadName, building_code1 as buildingcode1
+	, building_code2 as buildingcode2,si as sido, sigungu,borough as dong
+ 	FROM $sidoTable$ where sigungu=#sigungu# and road_name like '%'||#roadname#||'%'
+	</select>
+</sqlMap>

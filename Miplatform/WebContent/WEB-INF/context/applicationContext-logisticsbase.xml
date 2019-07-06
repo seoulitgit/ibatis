@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context   
+	   http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop 
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">	
+	<bean id="bomDAO" class="kr.co.seoulit.logistics.base.dao.BOMDAOImpl"
+	    parent="sqlMapClientTemplate"/>
+	<bean id="itemDAO" class="kr.co.seoulit.logistics.base.dao.ItemDAOImpl"
+	    parent="sqlMapClientTemplate"/>
+	<bean id="warehouseDAO" class="kr.co.seoulit.logistics.base.dao.WarehouseDAOImpl"
+	    parent="sqlMapClientTemplate"/>
+	<bean id="logisticsBaseServiceFacade" class="kr.co.seoulit.logistics.base.service.LogisticsBaseServiceFacadeImpl"
+	      p:logisticsBaseApplicationService-ref="logisticsBaseApplicationService" />
+	<bean id="logisticsBaseApplicationService" class="kr.co.seoulit.logistics.base.applicationservice.LogisticsBaseApplicationServiceImpl"
+	      p:bomDAO-ref="bomDAO"
+	      p:itemDAO-ref="itemDAO"
+	      p:baseApplicationService-ref="baseApplicationService"
+	      p:warehouseDAO-ref="warehouseDAO"
+	      p:messageSource-ref="message" />
+</beans>

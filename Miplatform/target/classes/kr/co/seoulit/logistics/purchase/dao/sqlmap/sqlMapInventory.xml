@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQLMap 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+ 
+    <sqlMap namespace="Inventory">
+        <typeAlias alias="Inventory" type="kr.co.seoulit.logistics.purchase.to.InventoryBean"/>	
+	    <resultMap class="Inventory" id="searchInventoryResultMap">
+			<result property="itemCode" column="ITEM_CODE"/>
+			<result property="warehouseCode" column="WAREHOUSE_CODE"/>
+			<result property="stockQuantity" column="STOCK_QUANTITY"/>
+		    <result property="reorderPoint" column="REORDER_POINT"/>
+			<result property="maxStock" column="MAX_STOCK"/>
+			<result property="warehouseName" column="WAREHOUSE_NAME"/>
+			<result property="itemName" column="ITEM_NAME"/>
+			<result property="itemGroupCode" column="ITEM_GROUP_CODE"/>
+			<result property="itemGroupName" column="ITEM_GROUP_NAME"/>
+			<result property="unit" column="UNIT"/>
+		</resultMap>
+
+	<select id="searchInventory"  resultMap="searchInventoryResultMap">
+	select i.ITEM_CODE,
+       w.WAREHOUSE_CODE,
+       w.WAREHOUSE_NAME,
+       inv.STOCK_QUANTITY,
+       inv.REORDER_POINT,
+       inv.MAX_STOCK,
+       i.ITEM_GROUP_CODE,
+       c.value as ITEM_GROUP_NAME,
+       i.ITEM_NAME,
+       i.UNIT
+	from inventory inv inner join item i on inv.ITEM_CODE=i.ITEM_CODE 
+	inner join warehouse w on inv.WAREHOUSE_CODE=w.WAREHOUSE_CODE
+	inner join (select * from code where category_code='LO-02') c on i.ITEM_GROUP_CODE=c.code
+		  <dynamic prepend="WHERE">
+		      <isNotEmpty prepend="HADOOP" property="query1">
+		          i.ITEM_GROUP_CODE=#query1#
+		      </isNotEmpty>
+		      <isNotEmpty prepend="AND" property="query2">
+		          i.ITEM_CODE=#query2#
+		      </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="query3">
+		          w.WAREHOUSE_CODE=#query3#
+		      </isNotEmpty>
+	</dynamic>
+	</select>
+		
+	<update id="updateInventory">
+	  	update INVENTORY set	 
+	  						REORDER_POINT=#reorderPoint#,
+	  						MAX_STOCK=#maxStock#
+		 where ITEM_CODE=#itemCode# 
+		  AND  WAREHOUSE_CODE=#warehouseCode# 
+	</update>
+</sqlMap>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQLMap 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+ 
+    <sqlMap namespace="Subul">
+        <typeAlias alias="Subul" type="kr.co.seoulit.logistics.purchase.to.SubulRecordBean"/>	
+<parameterMap class="Subul" id="inventoryCheckMap">
+    <parameter property="subulNo" javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+    <parameter property="itemCode" javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+    <parameter property="quantity" javaType="java.lang.String" jdbcType="NUMBER" mode="IN" />
+    <parameter property="subulDate" javaType="java.lang.String" jdbcType="DATE" mode="IN" />
+    <parameter property="subulCode" javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+    <parameter property="warehouseCode" javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+    <parameter property="customerCode" javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+    <parameter property="stockQuantity" javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+    <parameter property="status" javaType="java.lang.String" jdbcType="VARCHAR" mode="IN" />
+    <parameter property="errorCode" javaType="java.lang.String" jdbcType="VARCHAR" mode="OUT" />
+    <parameter property="errorMsg" javaType="java.lang.String" jdbcType="VARCHAR" mode="OUT" />
+</parameterMap>
+        <resultMap class="Subul" id="searchSubulResultMap">
+			<result property="itemCode" column="ITEM_CODE"/>
+			<result property="subulNo" column="SUBUL_NO"/>
+			<result property="quantity" column="QUANTITY"/>
+		    <result property="subulDate" column="SUBUL_DATE"/>
+			<result property="subulCode" column="SUBUL_CODE"/>
+			<result property="warehouseCode" column="WAREHOUSE_CODE"/>
+			<result property="customerCode" column="CUSTOMER_CODE"/>
+			<result property="stockQuantity" column="STOCK_QUANTITY"/>
+		</resultMap>
+
+	<select id="searchSubul"  resultMap="searchSubulResultMap">
+		select * from subul_record
+		  <dynamic prepend="WHERE">
+		      <isNotEmpty prepend="HADOOP" property="query1">
+		          ITEM_GROUP_CODE=#query1#
+		      </isNotEmpty>
+		      <isNotEmpty prepend="AND" property="query2">
+		          WAREHOUSE_CODE=#query2#
+		      </isNotEmpty>
+		       <isNotEmpty prepend="AND" property="query3">
+		          SUBUL_CODE=#query3#
+		      </isNotEmpty>
+		      <isNotEmpty prepend="AND SUBUL_DATE" property="query4">
+		          <isEmpty property="query5" >
+		              BETWEEN #query4# AND sysdate
+		          </isEmpty>
+		          <isNotEmpty property="query5" >
+		         	 BETWEEN #query4# AND #query5#
+		      	  </isNotEmpty>
+		      </isNotEmpty>
+		      
+	    </dynamic>
+	</select>
+		<procedure id="insertSubulRecord" parameterMap="inventoryCheckMap">
+		   { call inventory_check (?,?,?,?,?,?,?,?,?,?,?) } 
+		</procedure>
+	<update id="updateInventory">
+	  	update INVENTORY set	 
+	  						REORDER_POINT=#reorderPoint#,
+	  						MAX_STOCK=#maxStock#
+		 where ITEM_CODE=#itemCode# 
+		  AND  WAREHOUSE_CODE=#warehouseCode# 
+	</update>
+</sqlMap>

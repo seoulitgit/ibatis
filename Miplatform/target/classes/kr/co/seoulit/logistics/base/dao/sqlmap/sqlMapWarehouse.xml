@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQLMap 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Warehouse">
+	
+	<typeAlias alias="Warehouse" type="kr.co.seoulit.logistics.base.to.WarehouseBean" />
+	
+	<resultMap class="Warehouse" id="getWarehouseListResultMap">
+		<result property="warehouseCode" column="WAREHOUSE_CODE" />
+		<result property="managerNo" column="MANAGER_NO" />
+		<result property="warehouseName" column="WAREHOUSE_NAME" />
+	    <result property="managerName" column="EMP_NAME" />
+	    <result property="useYn" column="USE_YN" />
+	</resultMap>
+	
+	<select id="getWarehouseList"	resultMap="getWarehouseListResultMap">
+		select WAREHOUSE_CODE,
+				MANAGER_NO,
+				WAREHOUSE_NAME,
+				e.EMP_NAME,
+				code.USE_YN 
+			from WAREHOUSE w 
+			inner join Emp e on w.MANAGER_NO=e.EMP_NO 
+			inner join (SELECT * FROM CODE WHERE CATEGORY_CODE='LO-06') code
+			on w.WAREHOUSE_CODE=code.code
+	</select>
+	
+	<insert id="insertWarehouse">
+	  insert into WAREHOUSE values (#warehouseCode#,
+	  						   #managerNo#,
+	  						   #warehouseName#)
+	</insert>
+	
+	<delete id="deleteWarehouse">
+		delete from WAREHOUSE where WAREHOUSE_CODE=#warehouseCode#
+	</delete>
+	
+	<update id="updateWarehouse">
+		update WAREHOUSE set
+						MANAGER_NO=#managerNo#,
+		                WAREHOUSE_NAME=#warehouseName#
+		where WAREHOUSE_CODE=#warehouseCode#
+	</update>
+</sqlMap>

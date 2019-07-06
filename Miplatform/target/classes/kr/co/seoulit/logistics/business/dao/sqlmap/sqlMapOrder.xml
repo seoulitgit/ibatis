@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQLMap 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+    
+    <sqlMap namespace="Order">
+        <typeAlias alias="Order" type="kr.co.seoulit.logistics.business.to.OrderBean"/>	
+       <typeAlias alias="OrderInfo" type="kr.co.seoulit.logistics.business.to.OrderInfoBean"/>	
+  
+    <resultMap class="Order" id="searchOrderListResultMap">
+		<result property="orderNo" column="ORDER_NO"/>
+		<result property="orderDate" column="ORDER_DATE"/>
+		<result property="customerCode" column="CUSTOMER_CODE"/>
+		<result property="appointedDate" column="APPOINTED_DATE"/>
+        <result property="orderInfoList" select="Order.searchOrderInfoList" column="order_no"/>	
+	</resultMap>
+
+	<resultMap class="OrderInfo" id="searchOrderInfoListResultMap">
+		<result property="itemCode" column="ITEM_CODE"/>
+		<result property="orderNo" column="ORDER_NO"/>
+		<result property="quantity" column="QUANTITY"/>
+		<result property="unitCost" column="UNIT_COST"/>
+		<result property="releaseYN" column="RELEASE_YN"/>
+		<result property="planYN" column="PLAN_YN"/>
+		<result property="processYN" column="PROCESS_YN"/>
+		<result property="productionQuantity" column="PRODUCTION_QUANTITY"/>
+	</resultMap>
+
+	<select id="searchOrderList"  resultMap="searchOrderListResultMap">
+		SELECT order_no,
+		TO_CHAR(order_date,'YYYYMMDD') order_date,
+		customer_code,
+		TO_CHAR(appointed_date,'YYYYMMDD') appointed_date
+		 FROM ORDERS 
+		 <dynamic prepend="WHERE">
+		     
+		      <isNotEmpty prepend="HADOOP" property="query3">
+		          CUSTOMER_CODE=#query3#
+		      </isNotEmpty>
+		      <isNotEmpty prepend="AND" property="query1">
+		          <isEmpty property="query2" >
+		             ORDER_DATE BETWEEN #query1# AND sysdate
+		          </isEmpty>
+		          <isNotEmpty property="query2" >
+		         	ORDER_DATE BETWEEN #query1# AND #query2#
+		      	  </isNotEmpty>
+		      </isNotEmpty>
+		      		      
+	</dynamic>
+	</select>
+	<select id="searchOrderInfoList"  resultMap="searchOrderInfoListResultMap">
+		SELECT * FROM ORDER_INFO WHERE ORDER_NO=#orderNo#
+	</select>
+		
+	<insert id="insertOrder">
+	    insert into Orders  values(#orderNo#,
+	    						   #orderDate#,
+	    						   #customerCode#,
+	    						   #appointedDate# )
+	</insert>
+	<delete id="deleteOrder">
+	    delete from Orders where ORDER_NO=#orderNo#
+	</delete>
+	<update id="updateOrder">
+	    	update Orders set	
+	    					ORDER_DATE=#orderDate#,
+	    					CUSTOMER_CODE=#customerCode#,
+	    					APPOINTED_DATE=#appointedDate#
+	    	
+	    	WHERE  ORDER_NO=#orderNo#
+	    
+	</update>
+	
+		
+	
+	<insert id="insertOrderInfo">
+	    insert into Order_Info  values(#itemCode#,
+	    						      #orderNo#,
+	    						      #quantity#,
+	    						      #unitCost#,
+	    						      #releaseYN#,
+	    						      #planYN#,
+	    						      #productionQuantity#,
+	    						      #processYN# )
+	</insert>
+	<delete id="deleteOrderInfo">
+	    delete from Order_Info where ORDER_NO=#orderNo# AND ITEM_CODE=#itemCode#
+	</delete>
+	
+	<update id="updateOrderInfo">
+	    	update ORDER_INFO set	
+	    					     QUANTITY=#quantity#,
+	    					     UNIT_COST=#unitCost#,
+	    					     RELEASE_YN=#releaseYN#,
+	    					     PLAN_YN=#planYN#,
+	    					     PRODUCTION_QUANTITY=#productionQuantity#,
+	    					     PROCESS_YN=#processYN#
+	      	WHERE  ORDER_NO=#orderNo# AND ITEM_CODE=#itemCode#
+	    
+	</update>
+</sqlMap>
